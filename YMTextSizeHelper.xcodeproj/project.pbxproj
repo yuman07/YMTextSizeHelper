@@ -13,6 +13,7 @@
 		884537A12109A1760014338E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 884537A02109A1760014338E /* Assets.xcassets */; };
 		884537A42109A1760014338E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 884537A22109A1760014338E /* LaunchScreen.storyboard */; };
 		884537A72109A1760014338E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 884537A62109A1760014338E /* main.m */; };
+		884537AF2109A18D0014338E /* YMTextSizeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 884537AE2109A18D0014338E /* YMTextSizeHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		884537A32109A1760014338E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		884537A52109A1760014338E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		884537A62109A1760014338E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		884537AD2109A18D0014338E /* YMTextSizeHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YMTextSizeHelper.h; sourceTree = "<group>"; };
+		884537AE2109A18D0014338E /* YMTextSizeHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YMTextSizeHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 		884537962109A1750014338E /* YMTextSizeHelper */ = {
 			isa = PBXGroup;
 			children = (
+				884537AD2109A18D0014338E /* YMTextSizeHelper.h */,
+				884537AE2109A18D0014338E /* YMTextSizeHelper.m */,
 				884537972109A1750014338E /* AppDelegate.h */,
 				884537982109A1750014338E /* AppDelegate.m */,
 				8845379A2109A1750014338E /* ViewController.h */,
@@ -144,6 +149,7 @@
 				8845379C2109A1750014338E /* ViewController.m in Sources */,
 				884537A72109A1760014338E /* main.m in Sources */,
 				884537992109A1750014338E /* AppDelegate.m in Sources */,
+				884537AF2109A18D0014338E /* YMTextSizeHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

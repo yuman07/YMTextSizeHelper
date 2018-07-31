@@ -78,7 +78,7 @@ static NSCache *_cache = nil;
 {
     YMTextSizeConfig *config = [[YMTextSizeConfig alloc] init];
     if (makeConfigBlock) {
-        config = makeConfigBlock(config);
+        makeConfigBlock(config);
     }
     return [YMTextSizeHelper getSizeResultWithConfig:config];
 }

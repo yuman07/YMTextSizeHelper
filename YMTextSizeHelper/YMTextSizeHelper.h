@@ -54,7 +54,7 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 
 @end
 
-typedef YMTextSizeConfig*(^makeTextSizeConfig)(YMTextSizeConfig * config);
+typedef void(^makeTextSizeConfig)(YMTextSizeConfig * config);
 
 @interface YMTextSizeHelper : NSObject
 

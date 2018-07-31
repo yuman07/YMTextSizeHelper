@@ -63,7 +63,7 @@
 
 - (YMTextSizeResult *)getResult
 {
-    YMTextSizeResult *result = [YMTextSizeHelper getSizeResultWithMakeConfigBlock:^YMTextSizeConfig *(YMTextSizeConfig *config) {
+    YMTextSizeResult *result = [YMTextSizeHelper getSizeResultWithMakeConfigBlock:^(YMTextSizeConfig *config) {
         config.text = @"时代峰jjjjjjj";
         config.font = [UIFont systemFontOfSize:15];
         config.maxWidth = 200;
@@ -72,7 +72,6 @@
         config.numberOfLines = 1;
         config.lineBreakMode = NSLineBreakByTruncatingTail;
         config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore;
-        return config;
     }];
     return result;
 }

@@ -32,13 +32,13 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 /// 文本的最大行数，必须和label的设置同步，默认为1
 @property (nonatomic, assign) NSUInteger numberOfLines;
 
-/// 文本的截断模式，必须和label的设置同步，默认为NSLineBreakByTruncatingTail
-@property (nonatomic, assign) NSLineBreakMode lineBreakMode;
-
 /// 文本的行间距，默认为0
 @property (nonatomic, assign) CGFloat lineSpacing;
 
-/// 文本的其它属性(这些属性的范围必须为全文本)，默认为nil
+/// 文本的截断模式，默认为NSLineBreakByWordWrapping
+@property (nonatomic, assign) NSLineBreakMode lineBreakMode;
+
+/// 文本的其它属性，默认为nil
 @property (nonatomic, copy) NSDictionary<NSAttributedStringKey,id> *otherAttributes;
 
 /// 想要哪些结果的options，默认为YMTextSizeResultOptionsSize

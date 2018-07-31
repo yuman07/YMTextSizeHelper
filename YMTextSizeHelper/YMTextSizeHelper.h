@@ -2,7 +2,7 @@
 //  YMTextSizeHelper.h
 //  YMTextSizeHelper
 //
-//  Created by yuman01 on 2018/7/26.
+//  Created by yuman on 2018/7/26.
 //  Copyright © 2018年 yuman. All rights reserved.
 //
 
@@ -44,9 +44,6 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 /// 想要哪些结果的options，默认为YMTextSizeResultOptionsSize
 @property (nonatomic, assign) YMTextSizeResultOptions options;
 
-/// 是否可以保证文本在config各属性的限制下能展示完全无截断，默认为NO
-@property (nonatomic, assign) BOOL isMakeSureShowCompleted;
-
 @end
 
 @interface YMTextSizeResult : NSObject
@@ -57,7 +54,7 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 
 @end
 
-typedef YMTextSizeConfig*(^makeTextSizeConfig)(void);
+typedef YMTextSizeConfig*(^makeTextSizeConfig)(YMTextSizeConfig * config);
 
 @interface YMTextSizeHelper : NSObject
 

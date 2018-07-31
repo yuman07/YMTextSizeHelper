@@ -19,7 +19,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self testTime];
+ //   [self testTime];
     
     [self testTrue];
 }
@@ -35,8 +35,8 @@
     
     
     for (NSUInteger i = 0; i < 10000; i++) {
-       [self getResult];
-  //      [result.attributedText boundingRectWithSize:CGSizeMake(100, 500) options:drawOptions context:nil];
+        [self getResult];
+ //       [result.attributedText boundingRectWithSize:CGSizeMake(100, 500) options:drawOptions context:nil];
     }
     
     uint64_t end = mach_absolute_time();
@@ -63,16 +63,15 @@
 
 - (YMTextSizeResult *)getResult
 {
-    YMTextSizeResult *result = [YMTextSizeHelper getSizeResultWithMakeConfigBlock:^YMTextSizeConfig *{
-        YMTextSizeConfig *config = [[YMTextSizeConfig alloc] init];
-        config.text = @"水kk大度dddddkk水电费健康dd水kk大度dddddkk水电费健康dd水kk大度dddddkk水电费健康dd";
+    YMTextSizeResult *result = [YMTextSizeHelper getSizeResultWithMakeConfigBlock:^YMTextSizeConfig *(YMTextSizeConfig *config) {
+        config.text = @"时代峰jjjjjjj";
         config.font = [UIFont systemFontOfSize:15];
-        config.maxWidth = 100;
-        config.maxHeight = 500;
-        config.lineSpacing = 23.888;
-        config.numberOfLines = 0;
-        config.lineBreakMode = NSLineBreakByWordWrapping;
-        config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText;
+        config.maxWidth = 200;
+        config.maxHeight = 80;
+        config.lineSpacing = 17.789;
+        config.numberOfLines = 1;
+        config.lineBreakMode = NSLineBreakByTruncatingTail;
+        config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore;
         return config;
     }];
     return result;

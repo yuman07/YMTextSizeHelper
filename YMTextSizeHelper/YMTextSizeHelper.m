@@ -2,7 +2,7 @@
 //  YMTextSizeHelper.m
 //  YMTextSizeHelper
 //
-//  Created by yuman01 on 2018/7/26.
+//  Created by yuman on 2018/7/26.
 //  Copyright © 2018年 yuman. All rights reserved.
 //
 
@@ -10,6 +10,7 @@
 
 static const CGFloat EPS = 0.001;
 static const CGFloat HALF_FLOAT = CGFLOAT_MAX / 2.0;
+static const NSStringDrawingOptions drawOptions = NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading;
 
 static NSString * const kOneLine = @"一行text";
 
@@ -63,13 +64,21 @@ static NSString * const kOneLine = @"一行text";
 
 @end
 
+@interface YMTextSizeHelper()
+
+@property (class, nonatomic, strong) NSCache *cache;
+
+@end
+
 @implementation YMTextSizeHelper
+
+static NSCache *_cache = nil;
 
 + (YMTextSizeResult *)getSizeResultWithMakeConfigBlock:(makeTextSizeConfig)makeConfigBlock
 {
-    YMTextSizeConfig *config = nil;
+    YMTextSizeConfig *config = [[YMTextSizeConfig alloc] init];
     if (makeConfigBlock) {
-        config = makeConfigBlock();
+        config = makeConfigBlock(config);
     }
     return [YMTextSizeHelper getSizeResultWithConfig:config];
 }
@@ -83,11 +92,10 @@ static NSString * const kOneLine = @"一行text";
     
     NSMutableDictionary *attributes = ([config.otherAttributes isKindOfClass:[NSDictionary class]]) ? ([config.otherAttributes mutableCopy]) : ([[NSMutableDictionary alloc] init]);
     NSMutableParagraphStyle *paragraphStyle = ([attributes[NSParagraphStyleAttributeName] isKindOfClass:[NSParagraphStyle class]]) ? ([attributes[NSParagraphStyleAttributeName] mutableCopy]) : ([[NSMutableParagraphStyle alloc] init]);
-    NSStringDrawingOptions drawOptions = NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading;
     
-    BOOL isNoNeedLineHeight = (config.numberOfLines == 0) || (config.isMakeSureShowCompleted) || (config.maxWidth > HALF_FLOAT);
+    BOOL isNoNeedLineHeight = (config.numberOfLines == 0) || (config.maxWidth > HALF_FLOAT);
     BOOL isNoNeedLineSpacing = (fabs(config.lineSpacing) < EPS) || (config.numberOfLines == 1) || (config.maxWidth > HALF_FLOAT);
-    BOOL isMakeSureShowCompleted = (config.isMakeSureShowCompleted) || (config.maxWidth > HALF_FLOAT) || (config.numberOfLines == 0 && config.maxHeight > HALF_FLOAT);
+    BOOL isMakeSureShowCompleted = (config.maxWidth > HALF_FLOAT) || (config.numberOfLines == 0 && config.maxHeight > HALF_FLOAT);
     
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     [attributes setObject:config.font forKey:NSFontAttributeName];
@@ -133,7 +141,7 @@ static NSString * const kOneLine = @"一行text";
         [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
         NSAttributedString *oneText = [[NSAttributedString alloc] initWithString:kOneLine attributes:[attributes copy]];
         
-        CGFloat oneLineHeight = ceil([oneText boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:drawOptions context:nil].size.height);
+        CGFloat oneLineHeight = [YMTextSizeHelper getCacheOneLineHeight:oneText];
         CGFloat maxHeightByLines = (isNoNeedLineHeight) ? (CGFLOAT_MAX) : ((oneLineHeight * config.numberOfLines) + (config.lineSpacing * (config.numberOfLines - 1)));
         CGFloat realMaxHeight = MIN(maxHeightByLines, config.maxHeight);
         
@@ -169,6 +177,32 @@ static NSString * const kOneLine = @"一行text";
         }
     }
     return result;
+}
+
++ (void)setCache:(NSCache *)cache
+{
+    _cache = cache;
+}
+
++ (NSCache *)cache
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _cache = [[NSCache alloc] init];
+    });
+    return _cache;
+}
+
++ (CGFloat)getCacheOneLineHeight:(NSAttributedString *)oneText
+{
+    NSNumber *height = [YMTextSizeHelper.cache objectForKey:oneText];
+    if (height) {
+        return [height doubleValue];
+    } else {
+        CGFloat oneLineHeight = ceil([oneText boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:drawOptions context:nil].size.height);
+        [YMTextSizeHelper.cache setObject:@(oneLineHeight) forKey:oneText];
+        return oneLineHeight;
+    }
 }
 
 @end

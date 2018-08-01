@@ -29,7 +29,7 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 /// 文本的最大高度，默认为CGFLOAT_MAX
 @property (nonatomic, assign) CGFloat maxHeight;
 
-/// 文本的最大行数，必须和label的设置同步，默认为1
+/// 文本的最大行数，必须和label的设置同步，默认为0(即无限制)
 @property (nonatomic, assign) NSUInteger numberOfLines;
 
 /// 文本的行间距，默认为0
@@ -43,6 +43,9 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 
 /// 想要哪些结果的options，默认为YMTextSizeResultOptionsSize
 @property (nonatomic, assign) YMTextSizeResultOptions options;
+
+/// 文本能否确保在所给的限制条件下展示完毕，如果能设置为YES可以优化性能，默认为NO
+@property (nonatomic, assign) BOOL isMakeSureShowCompleted;
 
 @end
 

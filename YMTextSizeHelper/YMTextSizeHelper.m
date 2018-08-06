@@ -14,6 +14,12 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
 
 static NSString * const kOneLine = @"一行text";
 
+@interface YMTextSizeConfig ()
+
+@property (nonatomic, strong) NSString *key;
+
+@end
+
 @implementation YMTextSizeConfig
 
 - (instancetype)init
@@ -47,6 +53,12 @@ static NSString * const kOneLine = @"一行text";
     }
     return YES;
 }
+
+@end
+
+@interface YMTextSizeResult ()
+
+@property (nonatomic, assign) YMTextSizeResultOptions hasSolvedOptions;
 
 @end
 
@@ -89,6 +101,14 @@ static NSCache *_cache = nil;
         return result;
     }
     
+    if (config.isCache) {
+        config.key = [YMTextSizeHelper getKeyByConfig:config];
+        YMTextSizeResult *result = [YMTextSizeHelper getCacheResultByConfig:config];
+        if (result) {
+            return result;
+        }
+    }
+    
     NSMutableDictionary *attributes = ([config.otherAttributes isKindOfClass:[NSDictionary class]]) ? ([config.otherAttributes mutableCopy]) : ([[NSMutableDictionary alloc] init]);
     NSMutableParagraphStyle *paragraphStyle = ([attributes[NSParagraphStyleAttributeName] isKindOfClass:[NSParagraphStyle class]]) ? ([attributes[NSParagraphStyleAttributeName] mutableCopy]) : ([[NSMutableParagraphStyle alloc] init]);
     
@@ -117,13 +137,12 @@ static NSCache *_cache = nil;
                 result.hasMore = NO;
             } else {
                 CGFloat currentHeight = 0;
-                CGFloat allHeight = 0;
                 if (config.options&YMTextSizeResultOptionsSize) {
                     currentHeight = result.size.height;
                 } else {
                     currentHeight = ceil([string boundingRectWithSize:CGSizeMake(config.maxWidth, config.maxHeight) options:kDrawOptions context:nil].size.height);
                 }
-                allHeight = ceil([string boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height);
+                CGFloat allHeight = ceil([string boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height);
                 result.hasMore = (allHeight > currentHeight);
             }
         }
@@ -179,6 +198,9 @@ static NSCache *_cache = nil;
             }
         }
     }
+    if (config.isCache) {
+        [YMTextSizeHelper saveCacheResultByConfig:config result:result];
+    }
     return result;
 }
 
@@ -206,6 +228,31 @@ static NSCache *_cache = nil;
         [YMTextSizeHelper.cache setObject:@(oneLineHeight) forKey:oneText];
         return oneLineHeight;
     }
+}
+
++ (NSString *)getKeyByConfig:(YMTextSizeConfig *)config
+{
+    NSAttributedString *string = [[NSAttributedString alloc] initWithString:config.text attributes:config.otherAttributes];
+    NSString *maxWidth = config.maxWidth > BIG_FLOAT ? @"BIG_FLOAT" : [NSString stringWithFormat:@"%.2lf", config.maxWidth];
+    NSString *maxHeight = config.maxHeight > BIG_FLOAT ? @"BIG_FLOAT" : [NSString stringWithFormat:@"%.2lf", config.maxHeight];
+    NSString *key = [NSString stringWithFormat:@"%@_%@_%@_%@_%@_%.2lf_%@", string, config.font, maxWidth, maxHeight, @(config.numberOfLines), config.lineSpacing, @(config.lineBreakMode)];
+    return key;
+}
+
++ (YMTextSizeResult *)getCacheResultByConfig:(YMTextSizeConfig *)config
+{
+    YMTextSizeResult *result = [YMTextSizeHelper.cache objectForKey:config.key];
+    if (!result || ((config.options|result.hasSolvedOptions) != result.hasSolvedOptions)) {
+        return nil;
+    } else {
+        return result;
+    }
+}
+
++ (void)saveCacheResultByConfig:(YMTextSizeConfig *)config result:(YMTextSizeResult *)result
+{
+    result.hasSolvedOptions |= config.options;
+    [YMTextSizeHelper.cache setObject:result forKey:config.key];
 }
 
 @end

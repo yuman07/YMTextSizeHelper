@@ -251,8 +251,23 @@ static NSCache *_cache = nil;
 
 + (void)saveCacheResultByConfig:(YMTextSizeConfig *)config result:(YMTextSizeResult *)result
 {
-    result.hasSolvedOptions |= config.options;
-    [YMTextSizeHelper.cache setObject:result forKey:config.key];
+    YMTextSizeResult *oldResult = [YMTextSizeHelper.cache objectForKey:config.key];
+    if (!oldResult) {
+        result.hasSolvedOptions = config.options;
+        [YMTextSizeHelper.cache setObject:result forKey:config.key];
+    } else if (((oldResult.hasSolvedOptions | config.options) != oldResult.hasSolvedOptions)) {
+        oldResult.hasSolvedOptions |= config.options;
+        if (config.options&YMTextSizeResultOptionsSize) {
+            oldResult.size = result.size;
+        }
+        if (config.options&YMTextSizeResultOptionsAttributedText) {
+            oldResult.attributedText = result.attributedText;
+        }
+        if (config.options&YMTextSizeResultOptionsHasMore) {
+            oldResult.hasMore = result.hasMore;
+        }
+        [YMTextSizeHelper.cache setObject:oldResult forKey:config.key];
+    }
 }
 
 @end

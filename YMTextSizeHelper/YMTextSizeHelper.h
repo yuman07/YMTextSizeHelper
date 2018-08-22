@@ -10,9 +10,11 @@
 #import <UIKit/UIKit.h>
 
 typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
-    YMTextSizeResultOptionsSize               = 1 << 0,
-    YMTextSizeResultOptionsAttributedText     = 1 << 1,
-    YMTextSizeResultOptionsHasMore            = 1 << 2
+    YMTextSizeResultOptionsSize                = 1 << 0,
+    YMTextSizeResultOptionsAttributedText      = 1 << 1,
+    YMTextSizeResultOptionsHasMore             = 1 << 2,
+    YMTextSizeResultOptionsCurrentLinesNumber  = 1 << 3,
+    YMTextSizeResultOptionsAllLinesNumber      = 1 << 4
 };
 
 @interface YMTextSizeConfig : NSObject
@@ -54,6 +56,8 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 @property (nonatomic, assign) CGSize size;
 @property (nonatomic, copy) NSAttributedString *attributedText;
 @property (nonatomic, assign) BOOL hasMore;
+@property (nonatomic, assign) NSUInteger currentLinesNumber;
+@property (nonatomic, assign) NSUInteger allLinesNumber;
 
 @end
 

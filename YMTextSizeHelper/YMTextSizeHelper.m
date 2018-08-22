@@ -46,7 +46,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     if (config.maxWidth <= 0 || config.maxHeight <= 0 || config.lineSpacing < 0) {
         return NO;
     }
-    if ((config.options & (YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore)) == 0) {
+    if (!(config.options & (YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore|YMTextSizeResultOptionsCurrentLinesNumber|YMTextSizeResultOptionsAllLinesNumber))) {
         return NO;
     }
     return YES;
@@ -68,6 +68,8 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     result.size = CGSizeZero;
     result.attributedText = nil;
     result.hasMore = NO;
+    result.currentLinesNumber = 0;
+    result.allLinesNumber = 0;
     return result;
 }
 
@@ -107,6 +109,10 @@ static NSCache *_cache = nil;
         }
     }
     
+    if ([config.text hasPrefix:@"\n"] || [config.text hasPrefix:@"\r"]) {
+        config.text = [NSString stringWithFormat:@" %@", config.text];
+    }
+    
     NSMutableDictionary *attributes = ([config.otherAttributes isKindOfClass:[NSDictionary class]]) ? ([config.otherAttributes mutableCopy]) : ([[NSMutableDictionary alloc] init]);
     NSMutableParagraphStyle *paragraphStyle = ([attributes[NSParagraphStyleAttributeName] isKindOfClass:[NSParagraphStyle class]]) ? ([attributes[NSParagraphStyleAttributeName] mutableCopy]) : ([[NSMutableParagraphStyle alloc] init]);
     
@@ -129,12 +135,9 @@ static NSCache *_cache = nil;
         allText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
         size.height = oneLineHeight;
     }
-    size = CGSizeMake(ceil(size.width), ceil(size.height));
     
     if (config.options & YMTextSizeResultOptionsSize) {
-        if (config.maxHeight > oneLineHeight) {
-            result.size = size;
-        }
+        result.size = CGSizeMake(ceil(size.width), ceil(size.height));
     }
     
     if (config.options & YMTextSizeResultOptionsAttributedText) {
@@ -147,9 +150,18 @@ static NSCache *_cache = nil;
         }
     }
     
-    if (config.options & YMTextSizeResultOptionsHasMore) {
-        CGFloat allHeight = ceil([allText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height);
-        result.hasMore = (allHeight > size.height);
+    if ((config.options & YMTextSizeResultOptionsHasMore) || (config.options & YMTextSizeResultOptionsAllLinesNumber)) {
+        CGFloat allHeight = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height;
+        if (config.options & YMTextSizeResultOptionsHasMore) {
+            result.hasMore = (allHeight > size.height);
+        }
+        if (config.options & YMTextSizeResultOptionsAllLinesNumber) {
+            result.allLinesNumber = round(((allHeight + config.lineSpacing) / (oneLineHeight + config.lineSpacing)));
+        }
+    }
+    
+    if (config.options & YMTextSizeResultOptionsCurrentLinesNumber) {
+        result.currentLinesNumber = round(((size.height + config.lineSpacing) / (oneLineHeight + config.lineSpacing)));
     }
     
     if (config.isCache) {
@@ -208,6 +220,12 @@ static NSCache *_cache = nil;
         }
         if (config.options&YMTextSizeResultOptionsHasMore) {
             oldResult.hasMore = result.hasMore;
+        }
+        if (config.options&YMTextSizeResultOptionsCurrentLinesNumber) {
+            oldResult.currentLinesNumber = result.currentLinesNumber;
+        }
+        if (config.options&YMTextSizeResultOptionsAllLinesNumber) {
+            oldResult.allLinesNumber = result.allLinesNumber;
         }
         [YMTextSizeHelper.cache setObject:oldResult forKey:config.key];
     }

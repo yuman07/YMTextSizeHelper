@@ -39,13 +39,10 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 @property (nonatomic, assign) NSLineBreakMode lineBreakMode;
 
 /// 文本的其它属性，默认为nil
-@property (nonatomic, copy) NSDictionary<NSAttributedStringKey,id> *otherAttributes;
+@property (nonatomic, copy) NSDictionary<NSAttributedStringKey, id> *otherAttributes;
 
-/// 想要哪些结果的options，默认为YMTextSizeResultOptionsSize
+/// 需要计算哪些结果的options，默认为YMTextSizeResultOptionsSize
 @property (nonatomic, assign) YMTextSizeResultOptions options;
-
-/// 文本如果可以确保在所给限制条件下全部展示，可将此flag设置为YES以提高性能，默认为NO
-@property (nonatomic, assign) BOOL isMakeSureShowCompleted;
 
 /// 文本如果可能会被多次重复计算，可将此flag设置为YES以提高性能，默认为NO
 @property (nonatomic, assign) BOOL isCache;

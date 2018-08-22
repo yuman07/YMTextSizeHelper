@@ -19,9 +19,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self testTime];
+//    [self testTime];
     
-//    [self testTrue];
+    [self testTrue];
 }
 
 - (void)testTime
@@ -36,7 +36,7 @@
     uint64_t start1 = mach_absolute_time();
     
     for (NSUInteger i = 0; i < maxTime; i++) {
-        [result.attributedText boundingRectWithSize:CGSizeMake(100, 300) options:drawOptions context:nil];
+        [result.attributedText boundingRectWithSize:CGSizeMake(200, 200) options:drawOptions context:nil];
     }
     
     uint64_t end1 = mach_absolute_time();
@@ -66,23 +66,24 @@
     UILabel *label = [[UILabel alloc] init];
     label.attributedText = result.attributedText;
     label.numberOfLines = 0;
-    label.frame = CGRectMake(50, 50, result.size.width, result.size.height);
-    label.backgroundColor = [UIColor greenColor];
+    label.frame = CGRectMake(30, 30, result.size.width, result.size.height);
+    label.backgroundColor = [UIColor redColor];
     
     [self.view addSubview:label];
     
+    NSLog(@"%@", NSStringFromCGSize(label.frame.size));
     NSLog(@"%d", result.hasMore);
 }
 
 - (YMTextSizeResult *)getResult
 {
     YMTextSizeResult *result = [YMTextSizeHelper getSizeResultWithMakeConfigBlock:^(YMTextSizeConfig *config) {
-        config.text = @"人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。";
+        config.text = @"人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。";
         config.font = [UIFont systemFontOfSize:15];
-        config.maxWidth = 100;
-        config.maxHeight = 300;
-        config.lineSpacing = 17.789;
-        config.numberOfLines = 20;
+        config.maxWidth = 200;
+        config.maxHeight = 200;
+        config.lineSpacing = 12.789;
+        config.numberOfLines = 0;
         config.lineBreakMode = NSLineBreakByWordWrapping;
       //  config.isCache = YES;
         config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText;

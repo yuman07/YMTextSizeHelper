@@ -12,8 +12,6 @@ static const CGFloat EPS = 0.001;
 static const CGFloat BIG_FLOAT = CGFLOAT_MAX / 2.0;
 static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading;
 
-static NSString * const kOneLine = @"一行text";
-
 @interface YMTextSizeConfig ()
 
 @property (nonatomic, strong) NSString *key;
@@ -112,95 +110,52 @@ static NSCache *_cache = nil;
     NSMutableDictionary *attributes = ([config.otherAttributes isKindOfClass:[NSDictionary class]]) ? ([config.otherAttributes mutableCopy]) : ([[NSMutableDictionary alloc] init]);
     NSMutableParagraphStyle *paragraphStyle = ([attributes[NSParagraphStyleAttributeName] isKindOfClass:[NSParagraphStyle class]]) ? ([attributes[NSParagraphStyleAttributeName] mutableCopy]) : ([[NSMutableParagraphStyle alloc] init]);
     
-    BOOL isNoNeedLineHeight = (config.numberOfLines == 0) || (config.isMakeSureShowCompleted) || (config.maxWidth > BIG_FLOAT);
+    CGFloat oneLineHeight = config.font.lineHeight;
     BOOL isNoNeedLineSpacing = (fabs(config.lineSpacing) < EPS) || (config.numberOfLines == 1) || (config.maxWidth > BIG_FLOAT);
-    BOOL isMakeSureShowCompleted = (config.isMakeSureShowCompleted) || (config.maxWidth > BIG_FLOAT) || (config.numberOfLines == 0 && config.maxHeight > BIG_FLOAT);
     
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = isNoNeedLineSpacing ? 0 : config.lineSpacing;
     [attributes setObject:config.font forKey:NSFontAttributeName];
+    [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
+    NSAttributedString *allText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
     
-    if (isNoNeedLineHeight && isNoNeedLineSpacing) {
+    CGFloat maxHeightByLines = (config.numberOfLines == 0) ? (CGFLOAT_MAX) : ((oneLineHeight * config.numberOfLines) + (config.lineSpacing * (config.numberOfLines - 1)));
+    CGFloat realMaxHeight = MIN(maxHeightByLines, config.maxHeight);
+    CGSize size = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, realMaxHeight) options:kDrawOptions context:nil].size;
+    
+    if (!isNoNeedLineSpacing && (fabs(size.height - oneLineHeight - config.lineSpacing) < EPS)) {
         paragraphStyle.lineSpacing = 0;
         [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
-        NSAttributedString *string = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
-        if (config.options&YMTextSizeResultOptionsSize) {
-            result.size = [string boundingRectWithSize:CGSizeMake(config.maxWidth, config.maxHeight) options:kDrawOptions context:nil].size;
-            result.size = CGSizeMake(ceil(result.size.width), ceil(result.size.height));
-        }
-        if (config.options&YMTextSizeResultOptionsAttributedText) {
-            paragraphStyle.lineBreakMode = config.lineBreakMode;
-            [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
-            result.attributedText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
-        }
-        if (config.options&YMTextSizeResultOptionsHasMore) {
-            if (isMakeSureShowCompleted) {
-                result.hasMore = NO;
-            } else {
-                CGFloat currentHeight = 0;
-                if (config.options&YMTextSizeResultOptionsSize) {
-                    currentHeight = result.size.height;
-                } else {
-                    currentHeight = ceil([string boundingRectWithSize:CGSizeMake(config.maxWidth, config.maxHeight) options:kDrawOptions context:nil].size.height);
-                }
-                CGFloat allHeight = ceil([string boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height);
-                result.hasMore = (allHeight > currentHeight);
-            }
-        }
-    } else {
-        if (config.options == YMTextSizeResultOptionsAttributedText && isNoNeedLineSpacing) {
-            paragraphStyle.lineSpacing = 0;
-            paragraphStyle.lineBreakMode = config.lineBreakMode;
-            [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
-            result.attributedText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
-            return result;
-        }
-        if (config.options == YMTextSizeResultOptionsHasMore && isMakeSureShowCompleted) {
-            result.hasMore = NO;
-            return result;
-        }
-        
-        paragraphStyle.lineSpacing = 0;
-        [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
-        NSAttributedString *oneText = [[NSAttributedString alloc] initWithString:kOneLine attributes:[attributes copy]];
-        
-        CGFloat oneLineHeight = [YMTextSizeHelper getCacheOneLineHeight:oneText];
-        CGFloat maxHeightByLines = (isNoNeedLineHeight) ? (CGFLOAT_MAX) : ((oneLineHeight * config.numberOfLines) + (config.lineSpacing * (config.numberOfLines - 1)));
-        CGFloat realMaxHeight = MIN(maxHeightByLines, config.maxHeight);
-        
-        paragraphStyle.lineSpacing = isNoNeedLineSpacing ? 0 : config.lineSpacing;
-        [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
-        NSAttributedString *allText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
-        
-        CGSize size = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, realMaxHeight) options:kDrawOptions context:nil].size;
-        size = CGSizeMake(ceil(size.width), ceil(size.height));
-        
-        if (!isNoNeedLineSpacing && (fabs(size.height - oneLineHeight - config.lineSpacing) <= 1.0)) {
-            paragraphStyle.lineSpacing = 0;
-            [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
-            allText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
-            size = CGSizeMake(size.width, oneLineHeight);
-        }
-        
-        if (config.options&YMTextSizeResultOptionsSize) {
+        allText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
+        size.height = oneLineHeight;
+    }
+    size = CGSizeMake(ceil(size.width), ceil(size.height));
+    
+    if (config.options & YMTextSizeResultOptionsSize) {
+        if (config.maxHeight > oneLineHeight) {
             result.size = size;
         }
-        if (config.options&YMTextSizeResultOptionsAttributedText) {
+    }
+    
+    if (config.options & YMTextSizeResultOptionsAttributedText) {
+        if (config.lineBreakMode == NSLineBreakByWordWrapping) {
+            result.attributedText = allText;
+        } else {
             paragraphStyle.lineBreakMode = config.lineBreakMode;
             [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
             result.attributedText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
         }
-        if (config.options&YMTextSizeResultOptionsHasMore) {
-            if (isMakeSureShowCompleted || ((realMaxHeight - size.height - oneLineHeight - config.lineSpacing) > EPS)) {
-                result.hasMore = NO;
-            } else {
-                CGFloat allHeight = ceil([allText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height);
-                result.hasMore = (allHeight > result.size.height);
-            }
-        }
     }
+    
+    if (config.options & YMTextSizeResultOptionsHasMore) {
+        CGFloat allHeight = ceil([allText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height);
+        result.hasMore = (allHeight > size.height);
+    }
+    
     if (config.isCache) {
         [YMTextSizeHelper saveCacheResultByConfig:config result:result];
     }
+    
     return result;
 }
 
@@ -216,18 +171,6 @@ static NSCache *_cache = nil;
         _cache = [[NSCache alloc] init];
     });
     return _cache;
-}
-
-+ (CGFloat)getCacheOneLineHeight:(NSAttributedString *)oneText
-{
-    NSNumber *height = [YMTextSizeHelper.cache objectForKey:oneText];
-    if (height) {
-        return [height doubleValue];
-    } else {
-        CGFloat oneLineHeight = ceil([oneText boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height);
-        [YMTextSizeHelper.cache setObject:@(oneLineHeight) forKey:oneText];
-        return oneLineHeight;
-    }
 }
 
 + (NSString *)getKeyByConfig:(YMTextSizeConfig *)config
@@ -255,7 +198,7 @@ static NSCache *_cache = nil;
     if (!oldResult) {
         result.hasSolvedOptions = config.options;
         [YMTextSizeHelper.cache setObject:result forKey:config.key];
-    } else if (((oldResult.hasSolvedOptions | config.options) != oldResult.hasSolvedOptions)) {
+    } else if (((oldResult.hasSolvedOptions|config.options) != oldResult.hasSolvedOptions)) {
         oldResult.hasSolvedOptions |= config.options;
         if (config.options&YMTextSizeResultOptionsSize) {
             oldResult.size = result.size;

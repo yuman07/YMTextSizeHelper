@@ -116,7 +116,9 @@ static NSCache *_cache = nil;
     NSMutableDictionary *attributes = ([config.otherAttributes isKindOfClass:[NSDictionary class]]) ? ([config.otherAttributes mutableCopy]) : ([[NSMutableDictionary alloc] init]);
     NSMutableParagraphStyle *paragraphStyle = ([attributes[NSParagraphStyleAttributeName] isKindOfClass:[NSParagraphStyle class]]) ? ([attributes[NSParagraphStyleAttributeName] mutableCopy]) : ([[NSMutableParagraphStyle alloc] init]);
     
+    CGFloat allHeight = -1;
     CGFloat oneLineHeight = config.font.lineHeight;
+    CGFloat oneLineAndSpacingHeight = oneLineHeight + config.lineSpacing;
     BOOL isNoNeedLineSpacing = (fabs(config.lineSpacing) < EPS) || (config.numberOfLines == 1) || (config.maxWidth > BIG_FLOAT);
     
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
@@ -129,7 +131,7 @@ static NSCache *_cache = nil;
     CGFloat realMaxHeight = MIN(maxHeightByLines, config.maxHeight);
     CGSize size = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, realMaxHeight) options:kDrawOptions context:nil].size;
     
-    if (!isNoNeedLineSpacing && (fabs(size.height - oneLineHeight - config.lineSpacing) < EPS)) {
+    if (!isNoNeedLineSpacing && (fabs(size.height - oneLineAndSpacingHeight) < EPS)) {
         paragraphStyle.lineSpacing = 0;
         [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
         allText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
@@ -150,18 +152,24 @@ static NSCache *_cache = nil;
         }
     }
     
-    if ((config.options & YMTextSizeResultOptionsHasMore) || (config.options & YMTextSizeResultOptionsAllLinesNumber)) {
-        CGFloat allHeight = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height;
-        if (config.options & YMTextSizeResultOptionsHasMore) {
-            result.hasMore = ((allHeight - size.height) > EPS);
-        }
-        if (config.options & YMTextSizeResultOptionsAllLinesNumber) {
-            result.allLinesNumber = round(((allHeight + config.lineSpacing) / (oneLineHeight + config.lineSpacing)));
+    if ((config.options & YMTextSizeResultOptionsHasMore)) {
+        if ((realMaxHeight > size.height) || (config.maxWidth > BIG_FLOAT)) {
+            result.hasMore = NO;
+        } else {
+            allHeight = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height;
+            result.hasMore = allHeight > size.height;
         }
     }
     
     if (config.options & YMTextSizeResultOptionsCurrentLinesNumber) {
-        result.currentLinesNumber = round(((size.height + config.lineSpacing) / (oneLineHeight + config.lineSpacing)));
+        result.currentLinesNumber = round(((size.height + config.lineSpacing) / oneLineAndSpacingHeight));
+    }
+    
+    if (config.options & YMTextSizeResultOptionsAllLinesNumber) {
+        if (allHeight < 0) {
+            allHeight = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height;
+        }
+        result.allLinesNumber = round(((allHeight + config.lineSpacing) / oneLineAndSpacingHeight));
     }
     
     if (config.isCache) {

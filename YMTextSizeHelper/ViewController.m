@@ -66,7 +66,7 @@
     UILabel *label = [[UILabel alloc] init];
     label.attributedText = result.attributedText;
     label.numberOfLines = 0;
-    label.frame = CGRectMake(30, 30, result.size.width, result.size.height);
+    label.frame = CGRectMake(80, 80, result.size.width, result.size.height);
     label.backgroundColor = [UIColor redColor];
     
     [self.view addSubview:label];
@@ -80,10 +80,10 @@
 - (YMTextSizeResult *)getResult
 {
     YMTextSizeResult *result = [YMTextSizeHelper getSizeResultWithMakeConfigBlock:^(YMTextSizeConfig *config) {
-        config.text = @"人类一败涂地！OpenAI血虐Dota2半职业战\n\n队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。";
+        config.text = @"人类一败涂地！\nOpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。人类一败涂地！OpenAI血虐Dota2半职业战队！马斯克仅评价了两个字。。。";
         config.font = [UIFont systemFontOfSize:15];
         config.maxWidth = 200;
-        config.maxHeight = 10;
+        config.maxHeight = 200;
         config.lineSpacing = 7.789;
         config.numberOfLines = 0;
         config.lineBreakMode = NSLineBreakByTruncatingTail;

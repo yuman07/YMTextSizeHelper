@@ -46,7 +46,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     if (config.maxWidth <= 0 || config.maxHeight <= 0 || config.lineSpacing < 0) {
         return NO;
     }
-    if (!(config.options & (YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore|YMTextSizeResultOptionsCurrentLinesNumber|YMTextSizeResultOptionsAllLinesNumber))) {
+    if (!(config.options & ((YMTextSizeResultOptionsAllLinesNumber << 1) - 1))) {
         return NO;
     }
     return YES;
@@ -153,7 +153,7 @@ static NSCache *_cache = nil;
     if ((config.options & YMTextSizeResultOptionsHasMore) || (config.options & YMTextSizeResultOptionsAllLinesNumber)) {
         CGFloat allHeight = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height;
         if (config.options & YMTextSizeResultOptionsHasMore) {
-            result.hasMore = (allHeight > size.height);
+            result.hasMore = ((allHeight - size.height) > EPS);
         }
         if (config.options & YMTextSizeResultOptionsAllLinesNumber) {
             result.allLinesNumber = round(((allHeight + config.lineSpacing) / (oneLineHeight + config.lineSpacing)));

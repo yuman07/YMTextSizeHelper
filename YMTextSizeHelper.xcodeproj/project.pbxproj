@@ -61,8 +61,7 @@
 		884537962109A1750014338E /* YMTextSizeHelper */ = {
 			isa = PBXGroup;
 			children = (
-				884537AD2109A18D0014338E /* YMTextSizeHelper.h */,
-				884537AE2109A18D0014338E /* YMTextSizeHelper.m */,
+				8874F449214A3E72009A453C /* YMTextSizeHelper */,
 				884537972109A1750014338E /* AppDelegate.h */,
 				884537982109A1750014338E /* AppDelegate.m */,
 				8845379A2109A1750014338E /* ViewController.h */,
@@ -72,6 +71,15 @@
 				884537A22109A1760014338E /* LaunchScreen.storyboard */,
 				884537A52109A1760014338E /* Info.plist */,
 				884537A62109A1760014338E /* main.m */,
+			);
+			path = YMTextSizeHelper;
+			sourceTree = "<group>";
+		};
+		8874F449214A3E72009A453C /* YMTextSizeHelper */ = {
+			isa = PBXGroup;
+			children = (
+				884537AD2109A18D0014338E /* YMTextSizeHelper.h */,
+				884537AE2109A18D0014338E /* YMTextSizeHelper.m */,
 			);
 			path = YMTextSizeHelper;
 			sourceTree = "<group>";

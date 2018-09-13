@@ -196,9 +196,9 @@ static NSCache *_cache = nil;
 + (NSString *)getKeyByConfig:(YMTextSizeConfig *)config
 {
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:config.text attributes:config.otherAttributes];
-    NSString *maxWidth = config.maxWidth > BIG_FLOAT ? @"BIG_FLOAT" : [NSString stringWithFormat:@"%.2lf", config.maxWidth];
-    NSString *maxHeight = config.maxHeight > BIG_FLOAT ? @"BIG_FLOAT" : [NSString stringWithFormat:@"%.2lf", config.maxHeight];
-    NSString *key = [NSString stringWithFormat:@"%@_%@_%@_%@_%@_%.2lf_%@", string, config.font, maxWidth, maxHeight, @(config.numberOfLines), config.lineSpacing, @(config.lineBreakMode)];
+    NSString *maxWidth = config.maxWidth > BIG_FLOAT ? @"BIG_FLOAT" : [NSString stringWithFormat:@"%.2f", config.maxWidth];
+    NSString *maxHeight = config.maxHeight > BIG_FLOAT ? @"BIG_FLOAT" : [NSString stringWithFormat:@"%.2f", config.maxHeight];
+    NSString *key = [NSString stringWithFormat:@"%@_%@_%@_%@_%@_%.2f_%@", string, config.font, maxWidth, maxHeight, @(config.numberOfLines), config.lineSpacing, @(config.lineBreakMode)];
     return key;
 }
 

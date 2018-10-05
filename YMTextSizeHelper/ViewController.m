@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "YMTextSizeHelper.h"
-#import <mach/mach.h>
 
 @interface ViewController ()
 
@@ -30,32 +29,29 @@
     NSUInteger maxTime = 10000;
     NSStringDrawingOptions drawOptions = NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading;
     
-    mach_timebase_info_data_t timebaseInfo;
-    mach_timebase_info(&timebaseInfo);
-    
-    uint64_t start1 = mach_absolute_time();
+    NSTimeInterval begin1 = CACurrentMediaTime();
     
     for (NSUInteger i = 0; i < maxTime; i++) {
         [result.attributedText boundingRectWithSize:CGSizeMake(200, 200) options:drawOptions context:nil];
     }
     
-    uint64_t end1 = mach_absolute_time();
+    NSTimeInterval end1 = CACurrentMediaTime();
     
-    NSTimeInterval time1 = (((end1 - start1) / 1e6) * timebaseInfo.numer) / timebaseInfo.denom;
+    NSTimeInterval time1 = (end1 - begin1) * 1000.0;
     
-    uint64_t start2 = mach_absolute_time();
+    NSTimeInterval begin2 = CACurrentMediaTime();
     
     for (NSUInteger i = 0; i < maxTime; i++) {
         [self getResult];
     }
     
-    uint64_t end2 = mach_absolute_time();
+    NSTimeInterval end2 = CACurrentMediaTime();
     
-    NSTimeInterval time2 = (((end2 - start2) / 1e6) * timebaseInfo.numer) / timebaseInfo.denom;
+    NSTimeInterval time2 = (end2 - begin2) * 1000.0;
     
-    NSLog(@"target time::(%.2lf)", time1);
-    NSLog(@"current time::(%.2lf)", time2);
-    NSLog(@"excess time::(%.2lf)", time2 - time1);
+    NSLog(@"target time::(%.2f)", time1);
+    NSLog(@"current time::(%.2f)", time2);
+    NSLog(@"excess time::(%.2f)", time2 - time1);
     
 }
 
@@ -72,9 +68,9 @@
     [self.view addSubview:label];
     
     NSLog(@"%@", NSStringFromCGSize(label.frame.size));
-    NSLog(@"%d", result.hasMore);
+    NSLog(@"%@", @(result.hasMore));
     NSLog(@"%@", @(result.currentLinesNumber));
-    NSLog(@"%@", @(result.allLinesNumber));
+    NSLog(@"%@", @(result.allTextLinesNumber));
 }
 
 - (YMTextSizeResult *)getResult
@@ -88,7 +84,7 @@
         config.numberOfLines = 0;
         config.lineBreakMode = NSLineBreakByTruncatingTail;
       //  config.isCache = YES;
-        config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore|YMTextSizeResultOptionsCurrentLinesNumber|YMTextSizeResultOptionsAllLinesNumber;
+        config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore|YMTextSizeResultOptionsCurrentLinesNumber|YMTextSizeResultOptionsAllTextLinesNumber;
     }];
     return result;
 }

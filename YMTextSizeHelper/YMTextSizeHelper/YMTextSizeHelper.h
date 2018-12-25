@@ -61,12 +61,12 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 
 @end
 
-typedef void(^makeTextSizeConfig)(YMTextSizeConfig * config);
+typedef void(^textSizeConfigMaker)(YMTextSizeConfig * config);
 
 @interface YMTextSizeHelper : NSObject
 
-+ (YMTextSizeResult *)getSizeResultWithConfig:(YMTextSizeConfig *)config;
++ (YMTextSizeResult *)calculateSizeWithConfig:(YMTextSizeConfig *)config;
 
-+ (YMTextSizeResult *)getSizeResultWithMakeConfigBlock:(makeTextSizeConfig)makeConfigBlock;
++ (YMTextSizeResult *)calculateSizeWithConfigMaker:(textSizeConfigMaker)configMaker;
 
 @end

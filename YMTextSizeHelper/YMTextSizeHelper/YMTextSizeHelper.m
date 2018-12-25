@@ -32,7 +32,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     return self;
 }
 
-+ (BOOL)checkConfigVaild:(YMTextSizeConfig *)config
++ (BOOL)checkConfigValid:(YMTextSizeConfig *)config
 {
     if (!config || ![config isKindOfClass:[YMTextSizeConfig class]]) {
         return NO;
@@ -85,19 +85,19 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
 
 static NSCache *_cache = nil;
 
-+ (YMTextSizeResult *)getSizeResultWithMakeConfigBlock:(makeTextSizeConfig)makeConfigBlock
++ (YMTextSizeResult *)calculateSizeWithConfigMaker:(textSizeConfigMaker)configMaker
 {
     YMTextSizeConfig *config = [[YMTextSizeConfig alloc] init];
-    if (makeConfigBlock) {
-        makeConfigBlock(config);
+    if (configMaker) {
+        configMaker(config);
     }
-    return [YMTextSizeHelper getSizeResultWithConfig:config];
+    return [YMTextSizeHelper calculateSizeWithConfig:config];
 }
 
-+ (YMTextSizeResult *)getSizeResultWithConfig:(YMTextSizeConfig *)config
++ (YMTextSizeResult *)calculateSizeWithConfig:(YMTextSizeConfig *)config
 {
     YMTextSizeResult *result = [YMTextSizeResult zeroResult];
-    if (![YMTextSizeConfig checkConfigVaild:config]) {
+    if (![YMTextSizeConfig checkConfigValid:config]) {
         return result;
     }
     
@@ -113,7 +113,7 @@ static NSCache *_cache = nil;
         config.text = [NSString stringWithFormat:@" %@", config.text];
     }
     
-    NSMutableDictionary *attributes = ([config.otherAttributes isKindOfClass:[NSDictionary class]]) ? ([config.otherAttributes mutableCopy]) : ([[NSMutableDictionary alloc] init]);
+    NSMutableDictionary *attributes = ([config.otherAttributes isKindOfClass:[NSDictionary class]]) ? ([config.otherAttributes mutableCopy]) : ([NSMutableDictionary dictionary]);
     NSMutableParagraphStyle *paragraphStyle = ([attributes[NSParagraphStyleAttributeName] isKindOfClass:[NSParagraphStyle class]]) ? ([attributes[NSParagraphStyleAttributeName] mutableCopy]) : ([[NSMutableParagraphStyle alloc] init]);
     
     CGFloat allTextHeight = -1.0;

@@ -13,8 +13,7 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
     YMTextSizeResultOptionsSize                = 1 << 0,
     YMTextSizeResultOptionsAttributedText      = 1 << 1,
     YMTextSizeResultOptionsHasMore             = 1 << 2,
-    YMTextSizeResultOptionsCurrentLinesNumber  = 1 << 3,
-    YMTextSizeResultOptionsAllTextLinesNumber  = 1 << 4,
+    YMTextSizeResultOptionsLinesNumber         = 1 << 3,
 };
 
 @interface YMTextSizeConfig : NSObject
@@ -46,9 +45,6 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 /// 需要计算哪些结果的options，默认为YMTextSizeResultOptionsSize
 @property (nonatomic, assign) YMTextSizeResultOptions options;
 
-/// 文本如果可能会被多次重复计算，可将isCache设置为YES以提高性能，默认为NO
-@property (nonatomic, assign) BOOL isCache;
-
 @end
 
 @interface YMTextSizeResult : NSObject
@@ -56,8 +52,7 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 @property (nonatomic, assign) CGSize size;
 @property (nonatomic, copy)   NSAttributedString *attributedText;
 @property (nonatomic, assign) BOOL hasMore;
-@property (nonatomic, assign) NSUInteger currentLinesNumber;
-@property (nonatomic, assign) NSUInteger allTextLinesNumber;
+@property (nonatomic, assign) NSUInteger linesNumber;
 
 @end
 

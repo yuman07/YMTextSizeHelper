@@ -18,9 +18,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    [self testTime];
+    [self testTime];
     
-    [self testTrue];
+//    [self testTrue];
 }
 
 - (void)testTime
@@ -51,8 +51,7 @@
     
     NSLog(@"target time::(%.2f)", time1);
     NSLog(@"current time::(%.2f)", time2);
-    NSLog(@"excess time::(%.2f)", time2 - time1);
-    
+    NSLog(@"gap time::(%.2f)", time2 - time1);
 }
 
 - (void)testTrue
@@ -69,8 +68,7 @@
     
     NSLog(@"%@", NSStringFromCGSize(label.frame.size));
     NSLog(@"%@", @(result.hasMore));
-    NSLog(@"%@", @(result.currentLinesNumber));
-    NSLog(@"%@", @(result.allTextLinesNumber));
+    NSLog(@"%@", @(result.linesNumber));
 }
 
 - (YMTextSizeResult *)getResult
@@ -83,8 +81,7 @@
         config.lineSpacing = 7.789;
         config.numberOfLines = 0;
         config.lineBreakMode = NSLineBreakByTruncatingTail;
-      //  config.isCache = YES;
-        config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore|YMTextSizeResultOptionsCurrentLinesNumber|YMTextSizeResultOptionsAllTextLinesNumber;
+        config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText;
     }];
     return result;
 }

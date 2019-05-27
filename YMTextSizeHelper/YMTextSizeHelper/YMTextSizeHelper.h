@@ -24,25 +24,25 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 /// 文本字体，必须设置，默认为nil
 @property (nonatomic, strong) UIFont *font;
 
-/// 文本的最大宽度，默认为CGFLOAT_MAX
+/// 文本的最大宽度，非必需，默认为CGFLOAT_MAX
 @property (nonatomic, assign) CGFloat maxWidth;
 
-/// 文本的最大高度，默认为CGFLOAT_MAX
+/// 文本的最大高度，非必需，默认为CGFLOAT_MAX
 @property (nonatomic, assign) CGFloat maxHeight;
 
-/// 文本的最大行数，默认为0(即无限制)
+/// 文本的最大行数，非必需，默认为0(即无限制)
 @property (nonatomic, assign) NSUInteger numberOfLines;
 
-/// 文本的行间距，默认为0
+/// 文本的行间距，非必需，默认为0
 @property (nonatomic, assign) CGFloat lineSpacing;
 
-/// 文本的截断模式，默认为NSLineBreakByWordWrapping
+/// 文本的截断模式，非必需，默认为NSLineBreakByWordWrapping
 @property (nonatomic, assign) NSLineBreakMode lineBreakMode;
 
-/// 文本的其它属性，默认为nil
+/// 文本的其它属性，非必需，默认为nil
 @property (nonatomic, copy) NSDictionary<NSAttributedStringKey, id> *otherAttributes;
 
-/// 需要计算哪些结果的options，默认为YMTextSizeResultOptionsSize
+/// 需要计算哪些结果的options，非必需，默认为YMTextSizeResultOptionsSize
 @property (nonatomic, assign) YMTextSizeResultOptions options;
 
 @end
@@ -58,6 +58,10 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 
 typedef void(^textSizeConfigMaker)(YMTextSizeConfig * config);
 
+/**
+ 一个简易的计算文本size工具类
+ 如果计算失败则返回nil
+ */
 @interface YMTextSizeHelper : NSObject
 
 + (YMTextSizeResult *)calculateSizeWithConfig:(YMTextSizeConfig *)config;

@@ -46,6 +46,9 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     if (config.maxWidth <= 0 || config.maxHeight <= 0 || config.lineSpacing < 0) {
         return NO;
     }
+    if (config.otherAttributes && ![config.otherAttributes isKindOfClass:[NSDictionary class]]) {
+        return NO;
+    }
     if (!(config.options & ((YMTextSizeResultOptionsLinesNumber << 1) - 1))) {
         return NO;
     }
@@ -55,16 +58,6 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
 @end
 
 @implementation YMTextSizeResult
-
-+ (YMTextSizeResult *)zeroResult
-{
-    YMTextSizeResult *result = [[YMTextSizeResult alloc] init];
-    result.size = CGSizeZero;
-    result.attributedText = nil;
-    result.hasMore = NO;
-    result.linesNumber = 0;
-    return result;
-}
 
 @end
 
@@ -81,9 +74,8 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
 
 + (YMTextSizeResult *)calculateSizeWithConfig:(YMTextSizeConfig *)config
 {
-    YMTextSizeResult *result = [YMTextSizeResult zeroResult];
     if (![YMTextSizeConfig checkConfigValid:config]) {
-        return result;
+        return nil;
     }
     
     if ([config.text hasPrefix:@"\n"] || [config.text hasPrefix:@"\r"]) {
@@ -101,29 +93,31 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     paragraphStyle.lineSpacing = isNoNeedLineSpacing ? 0 : config.lineSpacing;
     [attributes setObject:config.font forKey:NSFontAttributeName];
     [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
-    NSAttributedString *allText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
     
     CGFloat maxHeightByLines = (config.numberOfLines == 0) ? (CGFLOAT_MAX) : ((oneLineHeight * config.numberOfLines) + (config.lineSpacing * (config.numberOfLines - 1)));
     CGFloat realMaxHeight = MIN(maxHeightByLines, config.maxHeight);
-    CGSize size = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, realMaxHeight) options:kDrawOptions context:nil].size;
+    CGSize size = [attributedText boundingRectWithSize:CGSizeMake(config.maxWidth, realMaxHeight) options:kDrawOptions context:nil].size;
 
     if (!isNoNeedLineSpacing && (fabs(size.height - oneLineAndSpacingHeight) < EPS)) {
         paragraphStyle.lineSpacing = 0;
         [attributes setObject:[paragraphStyle copy]  forKey:NSParagraphStyleAttributeName];
-        allText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
+        attributedText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
         size.height = oneLineHeight;
     }
-
+    
+    YMTextSizeResult *result = [[YMTextSizeResult alloc] init];
+    
     if (config.options & YMTextSizeResultOptionsSize) {
         result.size = CGSizeMake(ceil(size.width), ceil(size.height));
     }
 
     if (config.options & YMTextSizeResultOptionsAttributedText) {
         if (config.lineBreakMode == NSLineBreakByWordWrapping) {
-            result.attributedText = allText;
+            result.attributedText = attributedText;
         } else {
             paragraphStyle.lineBreakMode = config.lineBreakMode;
-            [attributes setObject:paragraphStyle  forKey:NSParagraphStyleAttributeName];
+            [attributes setObject:[paragraphStyle copy]  forKey:NSParagraphStyleAttributeName];
             result.attributedText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
         }
     }
@@ -132,7 +126,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
         if (((realMaxHeight - size.height) > oneLineAndSpacingHeight) || (config.maxWidth > BIG_FLOAT)) {
             result.hasMore = NO;
         } else {
-            CGFloat allTextHeight = [allText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height;
+            CGFloat allTextHeight = [attributedText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height;
             result.hasMore = ((allTextHeight - size.height) > oneLineAndSpacingHeight);
         }
     }

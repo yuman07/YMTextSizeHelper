@@ -18,9 +18,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self testTime];
+ //   [self testTime];
     
-//    [self testTrue];
+    [self testTrue];
 }
 
 - (void)testTime
@@ -81,7 +81,7 @@
         config.lineSpacing = 7.789;
         config.numberOfLines = 0;
         config.lineBreakMode = NSLineBreakByTruncatingTail;
-        config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText;
+        config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore|YMTextSizeResultOptionsLinesNumber;
     }];
     return result;
 }

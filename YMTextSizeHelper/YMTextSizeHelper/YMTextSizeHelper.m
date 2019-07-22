@@ -63,7 +63,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
 
 @implementation YMTextSizeHelper
 
-+ (YMTextSizeResult *)calculateSizeWithConfigMaker:(textSizeConfigMaker)configMaker
++ (YMTextSizeResult *)calculateSizeWithConfigMaker:(void (^)(YMTextSizeConfig *))configMaker
 {
     YMTextSizeConfig *config = [[YMTextSizeConfig alloc] init];
     if (configMaker) {

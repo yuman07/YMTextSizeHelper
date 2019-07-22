@@ -56,8 +56,6 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 
 @end
 
-typedef void(^textSizeConfigMaker)(YMTextSizeConfig * config);
-
 /**
  一个简易的计算文本size工具类
  如果计算失败则返回nil
@@ -66,6 +64,6 @@ typedef void(^textSizeConfigMaker)(YMTextSizeConfig * config);
 
 + (YMTextSizeResult *)calculateSizeWithConfig:(YMTextSizeConfig *)config;
 
-+ (YMTextSizeResult *)calculateSizeWithConfigMaker:(textSizeConfigMaker)configMaker;
++ (YMTextSizeResult *)calculateSizeWithConfigMaker:(void(^)(YMTextSizeConfig *config))configMaker;
 
 @end

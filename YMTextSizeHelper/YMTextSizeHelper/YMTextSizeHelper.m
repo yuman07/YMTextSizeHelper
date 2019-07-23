@@ -13,7 +13,7 @@ static const CGFloat BIG_FLOAT = CGFLOAT_MAX / 2.0;
 static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading;
 
 #define CHECK_DOUBLE_INVALID(_DOUBLE_) \
-({ double __w__ = (_DOUBLE_); (isnan(__w__) || isinf(__w__)); })
+({ double __w__ = (_DOUBLE_); !isnormal(__w__); })
 
 @implementation YMTextSizeConfig
 

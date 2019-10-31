@@ -12,6 +12,9 @@ static const CGFloat EPS = 0.001;
 static const CGFloat BIG_FLOAT = CGFLOAT_MAX / 2.0;
 static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading;
 
+#define CHECK_DOUBLE_INVALID(_DOUBLE_) \
+({ double __w__ = (_DOUBLE_); ((isnan(__w__) || isinf(__w__))); })
+
 @implementation YMTextSizeConfig
 
 - (instancetype)init
@@ -37,7 +40,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     if (!config.font || ![config.font isKindOfClass:[UIFont class]]) {
         return NO;
     }
-    if (!isnormal(config.maxWidth) || !isnormal(config.maxHeight) || !isnormal(config.lineSpacing)) {
+    if (CHECK_DOUBLE_INVALID(config.maxWidth) || CHECK_DOUBLE_INVALID(config.maxHeight) || CHECK_DOUBLE_INVALID(config.lineSpacing)) {
         return NO;
     }
     if (config.maxWidth <= 0 || config.maxHeight <= 0 || config.lineSpacing < 0) {

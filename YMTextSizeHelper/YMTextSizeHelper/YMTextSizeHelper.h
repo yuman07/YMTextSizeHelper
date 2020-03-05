@@ -36,7 +36,7 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 /// 文本的行间距，非必需，默认为0
 @property (nonatomic, assign) CGFloat lineSpacing;
 
-/// 文本的截断模式，非必需，默认为NSLineBreakByWordWrapping
+/// 文本的截断模式，非必需，默认为NSLineBreakByTruncatingTail
 @property (nonatomic, assign) NSLineBreakMode lineBreakMode;
 
 /// 文本的其它属性，非必需，默认为nil

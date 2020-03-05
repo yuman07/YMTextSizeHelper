@@ -8,12 +8,12 @@
 
 #import "YMTextSizeHelper.h"
 
-static const CGFloat EPS = 0.001;
-static const CGFloat BIG_FLOAT = CGFLOAT_MAX / 2.0;
+static const CGFloat kEPS = 0.0001;
+static const CGFloat kBigFloat = CGFLOAT_MAX / 2.0;
 static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading;
 
 #define CHECK_DOUBLE_INVALID(_DOUBLE_) \
-({ double __w__ = (_DOUBLE_); ((isnan(__w__) || isinf(__w__))); })
+({ double __a__ = (_DOUBLE_); ((isnan(__a__) || isinf(__a__))); })
 
 @implementation YMTextSizeConfig
 
@@ -23,7 +23,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     if (self) {
         _maxWidth = CGFLOAT_MAX;
         _maxHeight = CGFLOAT_MAX;
-        _lineBreakMode = NSLineBreakByWordWrapping;
+        _lineBreakMode = NSLineBreakByTruncatingTail;
         _options = YMTextSizeResultOptionsSize;
     }
     return self;
@@ -43,7 +43,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     if (CHECK_DOUBLE_INVALID(config.maxWidth) || CHECK_DOUBLE_INVALID(config.maxHeight) || CHECK_DOUBLE_INVALID(config.lineSpacing)) {
         return NO;
     }
-    if (config.maxWidth <= 0 || config.maxHeight <= 0 || config.lineSpacing < 0) {
+    if (config.maxWidth < kEPS || config.maxHeight < kEPS || config.lineSpacing < -kEPS) {
         return NO;
     }
     if (config.otherAttributes && ![config.otherAttributes isKindOfClass:[NSDictionary class]]) {
@@ -87,7 +87,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     
     CGFloat oneLineHeight = config.font.lineHeight;
     CGFloat oneLineAndSpacingHeight = oneLineHeight + config.lineSpacing;
-    BOOL isMakeSureNoLineSpacing = (fabs(config.lineSpacing) < EPS) || (config.numberOfLines == 1) || (config.maxWidth > BIG_FLOAT) || (config.text.length == 1);
+    BOOL isMakeSureNoLineSpacing = (fabs(config.lineSpacing) < kEPS) || (config.numberOfLines == 1) || (config.maxWidth > kBigFloat) || (config.text.length == 1);
     
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     paragraphStyle.lineSpacing = isMakeSureNoLineSpacing ? 0 : config.lineSpacing;
@@ -99,7 +99,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     CGFloat realMaxHeight = MIN(maxHeightByLines, config.maxHeight);
     CGSize size = [attributedText boundingRectWithSize:CGSizeMake(config.maxWidth, realMaxHeight) options:kDrawOptions context:nil].size;
     
-    if (!isMakeSureNoLineSpacing && (fabs(size.height - oneLineAndSpacingHeight) < EPS)) {
+    if (!isMakeSureNoLineSpacing && (fabs(size.height - oneLineAndSpacingHeight) < kEPS)) {
         paragraphStyle.lineSpacing = 0;
         [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
         attributedText = [[NSAttributedString alloc] initWithString:config.text attributes:[attributes copy]];
@@ -123,7 +123,7 @@ static const NSStringDrawingOptions kDrawOptions = NSStringDrawingUsesLineFragme
     }
     
     if ((config.options & YMTextSizeResultOptionsHasMore)) {
-        if ((config.maxWidth > BIG_FLOAT) || ((realMaxHeight - size.height) > oneLineAndSpacingHeight)) {
+        if ((config.maxWidth > kBigFloat) || ((realMaxHeight - size.height) > oneLineAndSpacingHeight)) {
             result.hasMore = NO;
         } else {
             CGFloat allTextHeight = [attributedText boundingRectWithSize:CGSizeMake(config.maxWidth, CGFLOAT_MAX) options:kDrawOptions context:nil].size.height;

@@ -33,7 +33,7 @@ static NSString * const kTestString = @"\n🙆🐴🍁☺️😺你好我是yuma
     UILabel *label = [[UILabel alloc] init];
     label.text = kTestString;
     label.numberOfLines = 3;
-    label.lineBreakMode = NSLineBreakByWordWrapping;
+    label.lineBreakMode = NSLineBreakByTruncatingTail;
     label.font = [UIFont systemFontOfSize:15];
     label.frame = CGRectMake(80, 80, 200, label.frame.size.height);
     label.backgroundColor = [UIColor redColor];
@@ -56,7 +56,7 @@ static NSString * const kTestString = @"\n🙆🐴🍁☺️😺你好我是yuma
     //    config.maxHeight = 30;
     //    config.lineSpacing = 10;
         config.numberOfLines = 3;
-        config.lineBreakMode = NSLineBreakByWordWrapping;
+        config.lineBreakMode = NSLineBreakByTruncatingTail;
         config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore|YMTextSizeResultOptionsLinesNumber;
     }];
     return result;

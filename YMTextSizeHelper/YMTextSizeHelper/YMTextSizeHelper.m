@@ -135,7 +135,7 @@ static const CGFloat kEPS = 0.0001;
         }
     }
     
-    if ((config.options & YMTextSizeResultOptionsHasMore)) {
+    if (config.options & YMTextSizeResultOptionsHasMore) {
         if ((realMaxHeight - size.height) > oneLineAndSpacingHeight) {
             result.hasMore = NO;
         } else {

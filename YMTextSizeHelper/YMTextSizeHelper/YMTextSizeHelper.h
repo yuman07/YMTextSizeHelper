@@ -58,6 +58,7 @@ typedef NS_OPTIONS(NSUInteger, YMTextSizeResultOptions) {
 
 /**
  一个简易的计算文本size工具类
+ 支持在子线程计算
  如果计算失败则返回nil
  */
 @interface YMTextSizeHelper : NSObject

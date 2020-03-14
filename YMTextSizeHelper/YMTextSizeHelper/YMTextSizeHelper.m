@@ -44,6 +44,9 @@ static const CGFloat kEPS = 0.0001;
     if (config.maxWidth < kEPS || config.maxHeight < config.font.lineHeight || config.lineSpacing < -kEPS) {
         return NO;
     }
+    if (!((config.lineBreakMode >= NSLineBreakByWordWrapping) && (config.lineBreakMode <= NSLineBreakByTruncatingMiddle))) {
+        return NO;
+    }
     if (config.otherAttributes && ![config.otherAttributes isKindOfClass:[NSDictionary class]]) {
         return NO;
     }
@@ -83,7 +86,7 @@ static const CGFloat kEPS = 0.0001;
     CGFloat oneLineAndSpacingHeight = oneLineHeight + config.lineSpacing;
     
     BOOL isLimitInOneLine = (config.numberOfLines == 1) || (config.maxHeight < (oneLineAndSpacingHeight * 2 - config.lineSpacing));
-    BOOL isMakeSureNoLineSpacing = (fabs(config.lineSpacing) < kEPS) || (isLimitInOneLine);
+    BOOL isMakeSureNoLineSpacing = (config.lineSpacing < kEPS) || (isLimitInOneLine);
     BOOL isStartWithNextLineChar = [config.text hasPrefix:@"\n"] || [config.text hasPrefix:@"\r"];
     
     NSString *realText = isStartWithNextLineChar ? [NSString stringWithFormat:@" %@", config.text] : config.text;
@@ -97,7 +100,13 @@ static const CGFloat kEPS = 0.0001;
         drawOptions |= NSStringDrawingTruncatesLastVisibleLine;
     }
     
-    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    if (drawOptions & NSStringDrawingTruncatesLastVisibleLine) {
+        paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    } else if (config.lineBreakMode == NSLineBreakByClipping) {
+        paragraphStyle.lineBreakMode = NSLineBreakByCharWrapping;
+    } else {
+        paragraphStyle.lineBreakMode = config.lineBreakMode;
+    }
     paragraphStyle.lineSpacing = isMakeSureNoLineSpacing ? 0 : config.lineSpacing;
     [attributes setObject:config.font forKey:NSFontAttributeName];
     [attributes setObject:[paragraphStyle copy] forKey:NSParagraphStyleAttributeName];
@@ -126,7 +135,7 @@ static const CGFloat kEPS = 0.0001;
     }
     
     if (config.options & YMTextSizeResultOptionsAttributedText) {
-        if (config.lineBreakMode == NSLineBreakByWordWrapping) {
+        if (paragraphStyle.lineBreakMode == config.lineBreakMode) {
             result.attributedText = attributedText;
         } else {
             paragraphStyle.lineBreakMode = config.lineBreakMode;

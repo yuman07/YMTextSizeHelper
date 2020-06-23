@@ -90,10 +90,7 @@ static const CGFloat kEPS = 0.0001;
     BOOL isStartWithNextLineChar = [config.text hasPrefix:@"\n"] || [config.text hasPrefix:@"\r"];
     
     NSString *realText = isStartWithNextLineChar ? [NSString stringWithFormat:@" %@", config.text] : config.text;
-    NSStringDrawingOptions drawOptions = NSStringDrawingUsesFontLeading;
-    if (!isLimitInOneLine) {
-        drawOptions |= NSStringDrawingUsesLineFragmentOrigin;
-    }
+    NSStringDrawingOptions drawOptions = NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin;
     if (config.lineBreakMode == NSLineBreakByTruncatingTail
         || config.lineBreakMode == NSLineBreakByTruncatingMiddle
         || config.lineBreakMode == NSLineBreakByTruncatingHead) {

@@ -24,10 +24,10 @@
 - (void)testTrue
 {
     YMTextSizeConfig *config = [[YMTextSizeConfig alloc] init];
-    config.text = @"🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123";
+    config.text = @"🙆🐴🍁☺️😺TTXS水电费第三方🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123";
     config.font = [UIFont systemFontOfSize:15];
     config.maxWidth = 300;
-    config.numberOfLines = 3;
+    config.numberOfLines = 1;
     config.lineBreakMode = NSLineBreakByTruncatingMiddle;
     config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore|YMTextSizeResultOptionsLinesNumber;
     
@@ -53,6 +53,13 @@
     }
     
     NSLog(@"M : %@", NSStringFromCGSize(label.frame.size));
+    
+    UILabel *tLabel = [[UILabel alloc] init];
+    tLabel.backgroundColor = [UIColor yellowColor];
+    tLabel.frame = CGRectMake(80, 300, result.size.width, result.size.height);
+    tLabel.attributedText = result.attributedText;
+    tLabel.numberOfLines = 0;
+    [self.view addSubview:tLabel];
 }
 
 @end

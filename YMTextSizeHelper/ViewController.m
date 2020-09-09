@@ -23,12 +23,19 @@
 
 - (void)testTrue
 {
+    NSArray *testStringArray = @[@"您",@"好",@"中",@"国",@"w",@"i",@"d",@"t",@"h",@",",@"。",@"a",@"b",@"c",@"\n", @"1",@"5",@"2",@"j",@"A",@"J",@"0",@"🆚",@"👃",@" "];
+    NSMutableString *text = [[NSMutableString alloc] init];
+    NSUInteger length = arc4random() % 200 + 1;
+    for (NSUInteger i = 0; i < length; i++) {
+        [text appendString:testStringArray[arc4random() % testStringArray.count]];
+    }
+    
     YMTextSizeConfig *config = [[YMTextSizeConfig alloc] init];
-    config.text = @"🙆🐴🍁☺️😺TTXS水电费第三方🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123🙆🐴🍁☺️😺你好我是yuman123";
+    config.text = [text copy];
     config.font = [UIFont systemFontOfSize:15];
     config.maxWidth = 300;
-    config.numberOfLines = 1;
-    config.lineBreakMode = NSLineBreakByTruncatingMiddle;
+    config.numberOfLines = 2;
+    config.lineBreakMode = NSLineBreakByTruncatingTail;
     config.options = YMTextSizeResultOptionsSize|YMTextSizeResultOptionsAttributedText|YMTextSizeResultOptionsHasMore|YMTextSizeResultOptionsLinesNumber;
     
     
